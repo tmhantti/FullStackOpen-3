@@ -1,0 +1,9 @@
+// POST http://localhost:3001/api/persons/
+POST https://sparkling-dust-9995.fly.dev/
+Content-Type: application/json
+
+    { 
+        "name": "Jaska5", 
+        "number": "123456"
+    }
+    
