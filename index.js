@@ -33,10 +33,12 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   }
+  else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
   // siirry Expressin virheidenhallintaan:
   next(error)
 }
-
 
 // palauta kaikki resurssit:
 app.get('/api/persons', (request, response) => {
@@ -81,14 +83,15 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 // uuden resurssin lisäys:
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     // tarkista että sekä nimi että numero on annettu
+    /* 
     if (!body.name || !body.number) {
       return response.status(400).json({ 
         error: 'name or number is missing' 
       })
-    }
+    } */
     // luo objekti ja talleta se tietokantaan
     const personDB = new Person({
       name: body.name,
@@ -119,8 +122,8 @@ app.use(unknownEndpoint)
 // virheidenkäsittelijä tulee kaikkien muiden middlewarejen rekisteröinnin jälkeen
 app.use(errorHandler)
 
-// const PORT = process.env.PORT || 3001
-const PORT = process.env.PORT
+// const PORT = process.env.PORT
+const PORT = 3000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
