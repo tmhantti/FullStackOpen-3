@@ -6,7 +6,7 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 mongoose.connect(url)
-  .then(result => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
@@ -15,21 +15,21 @@ mongoose.connect(url)
 
 //schema
 const personSchema = new mongoose.Schema({
-    name: 
+  name:
     {
       type: String,
       minlength: 3,
       required: true
     },
-    number: 
-    {      
-      type: String,    
+  number:
+    {
+      type: String,
       // tarkistetaan, onko numero vaaditussa muodossa:
       validate: {
         validator: function(v) {
-          let tmp= v.split("-")
+          let tmp= v.split('-')
           console.log(tmp)
-          if (tmp.length != 2) {
+          if (tmp.length !== 2) {
             console.log(1)
             return false
           }
@@ -43,16 +43,16 @@ const personSchema = new mongoose.Schema({
           }
           else if (isNaN(tmp[0]) || isNaN(tmp[1])) {
             console.log(4)
-            return false 
+            return false
           }
           else
-            return true 
+            return true
         },
         message: props => `${props.value} is not a valid phone number!`
       },
       required: true
     }
-  })
+})
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {

@@ -7,9 +7,9 @@ const Person = require('./models/person') // mongoDB model
 
 
 // middleware: tarkista, löytyykö 'build' kansiosta vastaava tiedosto
-app.use(express.static('build')) 
+app.use(express.static('build'))
 // middleware: tarvitaan JSON datan käsittelyyn
-app.use(express.json()) 
+app.use(express.json())
 // middleware: Cross-origin resource sharing
 app.use(cors())
 
@@ -19,10 +19,10 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-// uusi token (morgan): 
+// uusi token (morgan):
 morgan.token('body', function getBody (req) {
-    return (JSON.stringify(req.body))
-  })
+  return (JSON.stringify(req.body))
+})
 // middleware: käytetään seuraavaa formaattia morganin tuottamissa lokeissa
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
@@ -49,13 +49,13 @@ app.get('/api/persons', (request, response) => {
 
 // info:
 app.get('/info', (req, res) => {
-    let currentDate= new Date()
-    let noPeople = 0
-  
-    Person.find({}).then(result => {
-      result.forEach(person=> noPeople++)    
-      res.send(`<p>Phonebook has info for ${noPeople} people</p>
-        <p>${currentDate}</p>`)    
+  let currentDate= new Date()
+  let noPeople = 0
+
+  Person.find({}).then(result => {
+    result.forEach(() => noPeople++)
+    res.send(`<p>Phonebook has info for ${noPeople} people</p>
+        <p>${currentDate}</p>`)
   })
 })
 
@@ -70,13 +70,13 @@ app.get('/api/persons/:id', (request, response, next) => {
       }
     })
     // käsittely siirtyy  virheidenkäsittelymiddlewarelle:
-    .catch(error => next(error)) 
+    .catch(error => next(error))
 })
 
 // poista resurssi:
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -84,24 +84,24 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 // uuden resurssin lisäys:
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
-    // tarkista että sekä nimi että numero on annettu
-    /* 
+  const body = request.body
+  // tarkista että sekä nimi että numero on annettu
+  /*
     if (!body.name || !body.number) {
-      return response.status(400).json({ 
-        error: 'name or number is missing' 
+      return response.status(400).json({
+        error: 'name or number is missing'
       })
     } */
-    // luo objekti ja talleta se tietokantaan
-    const personDB = new Person({
-      name: body.name,
-      number: body.number,
-    })
-      personDB.save().then(savedPerson => {
-      response.json(savedPerson)      
-    })
-    .catch(error => next(error))
+  // luo objekti ja talleta se tietokantaan
+  const personDB = new Person({
+    name: body.name,
+    number: body.number,
   })
+  personDB.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
+    .catch(error => next(error))
+})
 
 // numeron vaihtaminen:
 app.put('/api/persons/:id', (request, response, next) => {
